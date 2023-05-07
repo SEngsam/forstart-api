@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use League\CommonMark\Node\Block\Document;
 
 class RegisterController extends BaseController
 {
@@ -26,11 +27,39 @@ class RegisterController extends BaseController
                 'lastname' => 'required',
                 'phone' => 'required',
                 'password' => 'required',
+                'drives_license_front' => 'required|mimes:png,jpg,jpeg,gif|max:2048',
+                'drives_license_back' => 'required|mimes:png,jpg,jpeg,gif|max:2048',
+                'identity_document' => 'required|mimes:png,jpg,jpeg,gif|max:2048',
+                'image' => 'required|mimes:png,jpg,jpeg,gif|max:2048',
+
+
             ]);
 
             if ($validator->fails()) {
                 return $this->sendError('Unauthorised.', ['error' => $validator->errors()->all()]);
             }
+
+            /**
+             * drives_license_front
+             *drives_license_back
+             */
+            $documents = [
+                'drives_license_front' => $request->file('drives_license_front'),
+                'drives_license_back' => $request->file('drives_license_back'),
+                'identity_document' => $request->file('identity_document'),
+                'image' => $request->file('image'),
+            ];
+$i=0;
+            foreach ($documents as  $key => $value ) {
+                if ($file =$value) {
+                    $path = $file->store('public/files/drivers/' . $request['firstname'] . $request['lastname'] . '/');
+                    $name = $file->getClientOriginalName();
+                    //store your file into directory and db
+                    $data[$key] = $path . $name;
+                }
+                print(++$i);
+            }
+
 
             $chkephone =  Driver::where('phone', $request->get('phone'))->first();
 
