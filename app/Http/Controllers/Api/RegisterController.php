@@ -49,17 +49,15 @@ class RegisterController extends BaseController
                 'identity_document' => $request->file('identity_document'),
                 'image' => $request->file('image'),
             ];
-$i=0;
-            foreach ($documents as  $key => $value ) {
-                if ($file =$value) {
+
+            foreach ($documents as  $key => $value) {
+                if ($file = $value) {
                     $path = $file->store('public/files/drivers/' . $request['firstname'] . $request['lastname'] . '/');
                     $name = $file->getClientOriginalName();
                     //store your file into directory and db
                     $data[$key] = $path . $name;
                 }
-                print(++$i);
             }
-
 
             $chkephone =  Driver::where('phone', $request->get('phone'))->first();
 
