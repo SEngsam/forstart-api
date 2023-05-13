@@ -6,6 +6,8 @@ use App\Http\Resources\ClientResource;
 use App\Http\Resources\DriverResource;
 use App\Models\Client;
 use App\Models\Driver;
+use App\Models\UserOtp;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -89,12 +91,23 @@ class RegisterController extends BaseController
                 ]);
                 $token = $driver->createToken('Monoloda', ['driver'])->accessToken;
 
-                $response['driver'] = [
-                    'user' => new DriverResource($driver),
-                    'token' => $token
-                ];
+                $currentDateTime = Carbon::now();
+                $expire_at = Carbon::now()->addMinute(30);
+                $otp = mt_rand(1111, 9999);
+                mt_rand(1111, 9999);
+                $data = array(
+                    'user_id' => $driver->id,
+                    'user_type' => 'driver',
+                    'otp' =>  $otp,
+                    'expire_at' => $expire_at,
+                );
+
+                $user_otp = UserOtp::create($data);
+                $response  = $user_otp->sendSMS($driver->id,  $request->get('phone'));
+
+
                 DB::commit();
-                $msg = 'User register successfully.';
+                $msg = 'driver register successfully.';
             }
             return $this->sendResponse($response, $msg);
         } catch (Exception $e) {
@@ -111,13 +124,22 @@ class RegisterController extends BaseController
                 'firstname' => 'required',
                 'lastname' => 'required',
                 'phone' => 'required',
-                'password' => 'required',
+                'image' => 'required|mimes:png,jpg,jpeg,gif|max:2048',
+
             ]);
 
             if ($validator->fails()) {
                 return $this->sendError('Unauthorised.', ['error' => $validator->errors()->all()]);
             }
-
+ 
+         
+                if (   $file =  $request->file('image')) {
+                    $path = $file->store('public/files/clients/' . $request['firstname'] . $request['lastname'] . '/');
+                    $name = $file->getClientOriginalName();
+                    //store your file into directory and db
+                    $data['image'] = $path . $name;
+                }
+        
             $chkephone =  Client::where('phone', $request->get('phone'))->first();
 
             if (!empty($chkephone)) {
@@ -130,12 +152,25 @@ class RegisterController extends BaseController
 
                 $client = Client::create($data);
 
-                $token = $client->createToken('Monoloda', ['client'])->accessToken;
 
+                $currentDateTime = Carbon::now();
+                $expire_at = Carbon::now()->addMinute(30);
+                $otp = mt_rand(1111, 9999);
+                mt_rand(1111, 9999);
+                $data = array(
+                    'user_id' => $client->id,
+                    'user_type' => 'client',
+                    'otp' =>  $otp,
+                    'expire_at' => $expire_at,
+                );
+                
                 $response['Client'] = [
                     'user' => new ClientResource($client),
-                    'token' => $token
+
                 ];
+                $user_otp = UserOtp::create($data);
+
+                $response  = $user_otp->sendSMS($client->id,  $request->get('phone'));
                 DB::commit();
                 $msg = 'User register successfully.';
             }

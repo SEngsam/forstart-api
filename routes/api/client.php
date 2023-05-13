@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\OtpController;
 use App\Http\Controllers\Api\RegisterController;
 
 /*
@@ -18,8 +19,14 @@ use App\Http\Controllers\Api\RegisterController;
 
 Route::post('client/login',[LoginController::class, 'clientLogin'])->name('clientLogin');
 Route::post('client/signup',[RegisterController::class, 'clientRegister'])->name('clientRegister');
+Route::post('client/verify_otp',[OtpController::class, 'verifyClientOtp'])->name('verifyOtp');
 
 Route::group( ['prefix' => 'client','middleware' => ['auth:client-api','scopes:client'] ],function(){
+ 
     // authenticated staff routes here 
-    Route::get('dashboard',[LoginController::class, 'clientDashboard']);
+     Route::post('vehicle_registration', [VehicleController::class, 'updateVehicleRegistration']);
+     Route::get('/dashboard',function(){
+        dd('s');   
+    });
+  
 });
