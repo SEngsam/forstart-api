@@ -28,7 +28,7 @@ class LoginController extends BaseController
 
     public function clientDashboard()
     {
-        dd('s');
+       
         $users = Client::all();
         $success =  $users;
 
@@ -66,7 +66,7 @@ class LoginController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'phone' => 'required',
-            'password' => 'required',
+
         ]);
 
         if ($validator->fails()) {
@@ -75,28 +75,24 @@ class LoginController extends BaseController
         $user =  Driver::where('phone', $request->get('phone'))->first();
 
         if ($user) {
+            config(['auth.guards.api.provider' => 'driver']);
+
             //send otp 
-            $currentDateTime = Carbon::now();
             $expire_at = Carbon::now()->addMinute(30);
             $otp= mt_rand(1111,9999);
-            mt_rand(1111,9999);
+ 
             $data = array(
                 'user_id' => $user->id,
                 'user_type' => 'driver',
                 'otp' =>  $otp ,
                 'expire_at' => $expire_at,
             );
-
             $user_otp = UserOtp::create($data);
             $success['success']=$user_otp->sendSMS($user->id,$user->phone);
- 
-
             return response()->json($success, 200);
         } else {
-            return response()->json(['error' => ['Phone number is Wrong.']], 201);
+            return response()->json(['error' => ['Phone number is Wrong.']], 200);
         }
-
-
     }
 
     public function clientLogin(Request $request)
@@ -115,7 +111,7 @@ class LoginController extends BaseController
             config(['auth.guards.api.provider' => 'client']);
 
             //send otp 
-            $currentDateTime = Carbon::now();
+            
             $expire_at = Carbon::now()->addMinute(30);
             $otp= mt_rand(1111,9999);
  
@@ -125,12 +121,9 @@ class LoginController extends BaseController
                 'otp' =>  $otp ,
                 'expire_at' => $expire_at,
             );
+ 
             $user_otp = UserOtp::create($data);
             $success['success']=$user_otp->sendSMS($user->id,$user->phone);
- 
-            $success['token'] =  $user->createToken('Monoloda',['client'])->accessToken; 
-         
-
             return response()->json($success, 200);
         } else {
             return response()->json(['error' => ['Phone number is Wrong.']], 200);

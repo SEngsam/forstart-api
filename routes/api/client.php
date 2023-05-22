@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\OtpController;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\TripController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,9 +25,9 @@ Route::post('client/verify_otp',[OtpController::class, 'verifyClientOtp'])->name
 Route::group( ['prefix' => 'client','middleware' => ['auth:client-api','scopes:client'] ],function(){
  
     // authenticated staff routes here 
-     Route::post('vehicle_registration', [VehicleController::class, 'updateVehicleRegistration']);
-     Route::get('/dashboard',function(){
-        dd('s');   
-    });
+    Route::get('select_trip', [TripController::class, 'tripType'])->name('tripType');
+    Route::post('fined_driver', [TripController::class, 'findDriver'])->name('findDriver');
+    Route::get('select_trip', [TripController::class, 'tripType'])->name('tripType');
+
   
 });

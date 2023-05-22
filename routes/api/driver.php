@@ -29,7 +29,9 @@ Route::middleware(['guest'])->group(function () {
  
 Route::group(['prefix' => 'driver', 'middleware' => ['auth:driver-api', 'scopes:driver' ]], function () {
     // authenticated staff routes here 
-    Route::get('dashboard', [LoginController::class, 'clientDashboard']);
+    Route::get('/dashboard',function(){
+     
+    });
 
     Route::post('vehicle_registration', [VehicleController::class, 'updateVehicleRegistration']);
 });
