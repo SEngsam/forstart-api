@@ -17,7 +17,8 @@ return new class extends Migration
             $table->unsignedInteger('driver_id');
             $table->unsignedInteger('trip_type_id');
             $table->string('offer_far');
-            $table->string('destination');
+            $table->string('from');
+            $table->string('to');
             $table->text('comment');
             $table->timestamps();
         });
