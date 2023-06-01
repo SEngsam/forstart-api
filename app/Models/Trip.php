@@ -8,5 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Trip extends Model
 {
     use HasFactory;
-    protected $fillable = ['fullname','client_id','driver_id','trip_type_id','offer_far','destination','comment'];
+    protected $guarded= [];
+    protected $fillable = ['client_id','driver_id','order_type_id','trip_type_id','offer_far' ,'from','to','comment'];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+
 }

@@ -27,7 +27,7 @@ Route::group( ['prefix' => 'client','middleware' => ['auth:client-api','scopes:c
     // authenticated staff routes here 
     Route::get('select_trip', [TripController::class, 'tripType'])->name('tripType');
     Route::post('fined_driver', [TripController::class, 'findDriver'])->name('findDriver');
-    Route::get('select_trip', [TripController::class, 'tripType'])->name('tripType');
+    Route::get('orders', [TripController::class, 'orders'])->name('orders');
 
   
 });
