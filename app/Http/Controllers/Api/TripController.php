@@ -61,7 +61,7 @@ class TripController extends BaseController
                 'full_name' => $client->firstname . ' ' . $client->lastname,
                 'client_id' => $client->id,
                 'driver_id' => 0,
-                'order_type_id' =>  0,
+                'trip_status_id' =>  0,
                 'trip_type_id' =>  0,
                 'from' => $request->input('from'),
                 'to' => $request->input('to'),
@@ -87,21 +87,21 @@ class TripController extends BaseController
 
 
 
-        $order_type_id = $request->get('order_type');
+        $trip_status_id = $request->get('order_type');
         DB::beginTransaction();
         $client = auth()->guard('client-api')->user();
 
         if ($request->get('order_type') != null) {
-            $orders =  Trip::where(['client_id' => $client->id, 'order_type_id' => $order_type_id])->get()->all();
+            $orders =  Trip::where(['client_id' => $client->id, 'trip_status_id' => $trip_status_id])->get()->all();
         } else {
             $orders = Trip::get()->all();
         }
 
         foreach ($orders as $order) {
-            if ($order['order_type_id'] == 1) {
+            if ($order['trip_status_id'] == 1) {
                 $oreder['trip_status'] = "Cancelled";
             } elseif (
-                $order['order_type_id'] == 2
+                $order['trip_status_id'] == 2
             ) {
                 $oreder['trip_status'] = "approverd";
             } else {

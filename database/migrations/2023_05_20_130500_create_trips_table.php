@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('client_id');
             $table->unsignedInteger('driver_id');
             $table->unsignedInteger('trip_type_id');
-            $table->unsignedInteger('order_type_id')->default(1);
+            $table->unsignedInteger('trip_status_id')->default(1);
             $table->string('offer_far');
             $table->string('from');
             $table->string('to');
